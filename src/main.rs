@@ -5,7 +5,7 @@ mod utils;
 
 fn main() {
     match prompt("Select a challenge day: ") {
-        1 => select_challenge(day1::solution1, || ()),
+        1 => select_challenge(day1::solution1, day1::solution2),
         _ => panic!("Out of bounds day selected!"),
     };
 }
