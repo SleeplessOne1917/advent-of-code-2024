@@ -24,7 +24,7 @@ fn prompt(message: &str) -> u8 {
     print!("{message}");
     let _ = io::stdout().flush();
     let mut s = String::new();
-    io::stdin().read_line(&mut s).unwrap();
+    io::stdin().read_line(&mut s).expect("Error reading line from stdin!");
 
-    s.trim().parse::<u8>().unwrap()
+    s.trim().parse::<u8>().expect("Prompt must be a positive integer!")
 }

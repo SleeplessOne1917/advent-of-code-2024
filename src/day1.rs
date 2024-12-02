@@ -11,8 +11,8 @@ pub fn solution1() {
     let total_distance = id_list1
         .into_iter()
         .zip(id_list2)
-        .map(|(left, right)| (left - right).abs())
-        .sum::<i32>();
+        .map(|(left, right)| left.abs_diff(right))
+        .sum::<u32>();
 
     println!("Total distance = {total_distance}");
 }
@@ -23,7 +23,7 @@ pub fn solution2() {
     let id_count_map = id_list2
         .into_iter()
         .fold(HashMap::<_, i32>::new(), |mut map, id| {
-            *map.entry(id).or_default() += 1i32;
+            *map.entry(id).or_default() += 1;
 
             map
         });
