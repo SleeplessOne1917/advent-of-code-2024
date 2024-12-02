@@ -5,8 +5,8 @@ use crate::utils::read_lines;
 pub fn solution1() {
     let (mut id_list1, mut id_list2) = get_id_lists();
 
-    id_list1.sort();
-    id_list2.sort();
+    id_list1.sort_unstable();
+    id_list2.sort_unstable();
 
     let total_distance = id_list1
         .into_iter()
