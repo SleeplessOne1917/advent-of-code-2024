@@ -12,7 +12,7 @@ pub fn solution1() {
         .into_iter()
         .zip(id_list2)
         .map(|(left, right)| left.abs_diff(right))
-        .sum::<u32>();
+        .sum::<usize>();
 
     println!("Total distance = {total_distance}");
 }
@@ -22,7 +22,7 @@ pub fn solution2() {
 
     let id_count_map = id_list2
         .into_iter()
-        .fold(HashMap::<_, i32>::new(), |mut map, id| {
+        .fold(HashMap::<_, usize>::new(), |mut map, id| {
             *map.entry(id).or_default() += 1;
 
             map
@@ -31,16 +31,16 @@ pub fn solution2() {
     let similarity_score = id_list1
         .into_iter()
         .map(|id| id * id_count_map.get(&id).copied().unwrap_or_default())
-        .sum::<i32>();
+        .sum::<usize>();
 
     println!("Similarity score = {similarity_score}");
 }
 
-fn get_id_lists() -> (Vec<i32>, Vec<i32>) {
+fn get_id_lists() -> (Vec<usize>, Vec<usize>) {
     read_lines("src/day1/input.txt")
         .map(|line| {
             let mut ids = line.split_whitespace().map(|id| {
-                id.parse::<i32>()
+                id.parse::<usize>()
                     .expect("Ids from input must be valid integers")
             });
 
