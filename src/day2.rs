@@ -13,13 +13,12 @@ pub fn solution2() {
     let reports = get_reports();
     let safe_reports = reports
         .filter(|report| {
-            report.windows(3).all(window_is_valid)
-                || (0..report.len()).any(|i| {
-                    [&report[0..i], &report[i + 1..]]
-                        .concat()
-                        .windows(3)
-                        .all(window_is_valid)
-                })
+            (0..report.len()).any(|i| {
+                [&report[0..i], &report[i + 1..]]
+                    .concat()
+                    .windows(3)
+                    .all(window_is_valid)
+            })
         })
         .count();
 
