@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use crate::utils::read_lines;
+use std::collections::HashMap;
 
 pub fn solution1() {
     let (mut id_list1, mut id_list2) = get_id_lists();
