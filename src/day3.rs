@@ -5,32 +5,18 @@ pub fn solution1() {
     let sum = lines
         .map(|line| {
             let mut sum = 0;
-            let mut mul_bytes = Vec::new();
+            let mut command_bytes = Vec::new();
             for byte in line.bytes() {
-                match (byte, mul_bytes.last()) {
-                    (b'm', None)
-                    | (b'u', Some(b'm'))
-                    | (b'l', Some(b'u'))
-                    | (b'(', Some(b'l'))
-                    | (b'0'..=b'9', Some(b'(' | b'0'..=b'9' | b','))
-                    | (b',', Some(b'0'..=b'9')) => mul_bytes.push(byte),
-                    (b')', Some(b'0'..=b'9')) => {
-                        let first_num_index = mul_bytes
-                            .iter()
-                            .position(u8::is_ascii_digit)
-                            .expect("Guarunteed to be there");
-                        let comma_index = mul_bytes
-                            .iter()
-                            .position(|&c| c == b',')
-                            .expect("Guarunteed to be there.");
-
-                        let num1 = bytes_to_num(&mul_bytes[first_num_index..comma_index]);
-                        let num2 = bytes_to_num(&mul_bytes[comma_index + 1..]);
-
-                        sum += num1 * num2;
-                        mul_bytes.clear();
+                match (byte, command_bytes.as_slice()) {
+                    (b')', [.., b'0'..=b'9']) => {
+                        handle_mul(&mut command_bytes, &mut sum);
                     }
-                    _ => mul_bytes.clear(),
+                    _ if matches_mul(byte, &command_bytes) => {
+                        command_bytes.push(byte);
+                    }
+                    _ => {
+                        command_bytes.clear();
+                    }
                 }
             }
 
@@ -51,32 +37,8 @@ pub fn solution2() {
             let mut command_bytes = Vec::new();
             for byte in line.bytes() {
                 match (byte, command_bytes.as_slice()) {
-                    (b'm', [])
-                    | (b'u', [.., b'm'])
-                    | (b'l', [.., b'u'])
-                    | (b'(', [.., b'l' | b'o' | b't'])
-                    | (b'0'..=b'9', [.., b'(' | b'0'..=b'9' | b','])
-                    | (b',', [.., b'0'..=b'9'])
-                    | (b'd', [])
-                    | (b'o', [.., b'd'])
-                    | (b'n', [.., b'o'])
-                    | (b'\'', [.., b'n'])
-                    | (b't', [.., b'\'']) => command_bytes.push(byte),
                     (b')', [.., b'0'..=b'9']) if can_mul => {
-                        let first_num_index = command_bytes
-                            .iter()
-                            .position(u8::is_ascii_digit)
-                            .expect("Guarunteed to be there");
-                        let comma_index = command_bytes
-                            .iter()
-                            .position(|&c| c == b',')
-                            .expect("Guarunteed to be there.");
-
-                        let num1 = bytes_to_num(&command_bytes[first_num_index..comma_index]);
-                        let num2 = bytes_to_num(&command_bytes[comma_index + 1..]);
-
-                        sum += num1 * num2;
-                        command_bytes.clear();
+                        handle_mul(&mut command_bytes, &mut sum);
                     }
                     (b')', [b'd', b'o', b'(']) => {
                         can_mul = true;
@@ -86,7 +48,14 @@ pub fn solution2() {
                         can_mul = false;
                         command_bytes.clear();
                     }
-                    _ => command_bytes.clear(),
+                    _ if matches_do_or_dont(byte, &command_bytes)
+                        || matches_mul(byte, &command_bytes) =>
+                    {
+                        command_bytes.push(byte);
+                    }
+                    _ => {
+                        command_bytes.clear();
+                    }
                 }
             }
 
@@ -95,6 +64,47 @@ pub fn solution2() {
         .sum::<usize>();
 
     println!("Sum of enabled multiplication results = {sum}");
+}
+
+fn matches_mul(byte: u8, command_bytes: &[u8]) -> bool {
+    matches!(
+        (byte, command_bytes),
+        (b'm', [])
+            | (b'u', [.., b'm'])
+            | (b'l', [.., b'u'])
+            | (b'(', [.., b'l'])
+            | (b'0'..=b'9', [.., b'(' | b'0'..=b'9' | b','])
+            | (b',', [.., b'0'..=b'9'])
+    )
+}
+
+fn matches_do_or_dont(byte: u8, command_bytes: &[u8]) -> bool {
+    matches!(
+        (byte, command_bytes),
+        (b'd', [])
+            | (b'o', [.., b'd'])
+            | (b'n', [.., b'o'])
+            | (b'\'', [.., b'n'])
+            | (b'(', [.., b'o' | b't'])
+            | (b't', [.., b'\''])
+    )
+}
+
+fn handle_mul(command_bytes: &mut Vec<u8>, sum: &mut usize) {
+    let first_num_index = command_bytes
+        .iter()
+        .position(u8::is_ascii_digit)
+        .expect("Guarunteed to be there");
+    let comma_index = command_bytes
+        .iter()
+        .position(|&c| c == b',')
+        .expect("Guarunteed to be there.");
+
+    let num1 = bytes_to_num(&command_bytes[first_num_index..comma_index]);
+    let num2 = bytes_to_num(&command_bytes[comma_index + 1..]);
+
+    *sum += num1 * num2;
+    command_bytes.clear();
 }
 
 fn bytes_to_num(bytes: &[u8]) -> usize {
