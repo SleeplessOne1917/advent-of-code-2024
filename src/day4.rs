@@ -15,52 +15,18 @@ pub fn solution1() {
                 .count() as u32
         })
         .sum::<u32>();
-    let vertical_sum = puzzle
+    let vertical_and_diagonal_sum = puzzle
         .windows(4)
         .map(|window| {
-            zip(
-                window[0].iter(),
-                zip(window[1].iter(), zip(window[2].iter(), window[3].iter())),
-            )
-            .map(|(a, (b, (c, d)))| (a, b, c, d))
-            .filter(|tup| matches!(tup, (b'X', b'M', b'A', b'S') | (b'S', b'A', b'M', b'X')))
-            .count() as u32
-        })
-        .sum::<u32>();
-    let diag_sum_1 = puzzle
-        .windows(4)
-        .map(|window| {
-            zip(
-                window[0].iter().skip(3),
-                zip(
-                    window[1].iter().skip(2),
-                    zip(window[2].iter().skip(1), window[3].iter()),
-                ),
-            )
-            .map(|(a, (b, (c, d)))| (a, b, c, d))
-            .filter(|tup| matches!(tup, (b'X', b'M', b'A', b'S') | (b'S', b'A', b'M', b'X')))
-            .count() as u32
-        })
-        .sum::<u32>();
-    let diag_sum_2 = puzzle
-        .windows(4)
-        .map(|window| {
-            zip(
-                window[0].iter(),
-                zip(
-                    window[1].iter().skip(1),
-                    zip(window[2].iter().skip(2), window[3].iter().skip(3)),
-                ),
-            )
-            .map(|(a, (b, (c, d)))| (a, b, c, d))
-            .filter(|tup| matches!(tup, (b'X', b'M', b'A', b'S') | (b'S', b'A', b'M', b'X')))
-            .count() as u32
+            count_xmas(window, (0, 0, 0, 0))
+                + count_xmas(window, (0, 1, 2, 3))
+                + count_xmas(window, (3, 2, 1, 0))
         })
         .sum::<u32>();
 
     println!(
         "XMAS count = {}",
-        horizontal_sum + vertical_sum + diag_sum_1 + diag_sum_2
+        horizontal_sum + vertical_and_diagonal_sum
     );
 }
 
@@ -89,6 +55,22 @@ pub fn solution2() {
         .sum::<u32>();
 
     println!("X-MAS count = {sum}");
+}
+
+fn count_xmas(
+    window: &[Vec<u8>],
+    (skip0, skip1, skip2, skip3): (usize, usize, usize, usize),
+) -> u32 {
+    zip(
+        window[0].iter().skip(skip0),
+        zip(
+            window[1].iter().skip(skip1),
+            zip(window[2].iter().skip(skip2), window[3].iter().skip(skip3)),
+        ),
+    )
+    .map(|(a, (b, (c, d)))| (a, b, c, d))
+    .filter(|tup| matches!(tup, (b'X', b'M', b'A', b'S') | (b'S', b'A', b'M', b'X')))
+    .count() as u32
 }
 
 fn read_puzzle() -> Vec<Vec<u8>> {
