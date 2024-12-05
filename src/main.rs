@@ -11,7 +11,7 @@ fn main() {
         1 => select_challenge(day1::solution1, day1::solution2),
         2 => select_challenge(day2::solution1, day2::solution2),
         3 => select_challenge(day3::solution1, day3::solution2),
-        4 => select_challenge(day4::solution1, || ()),
+        4 => select_challenge(day4::solution1, day4::solution2),
         _ => panic!("Out of bounds day selected!"),
     };
 }
