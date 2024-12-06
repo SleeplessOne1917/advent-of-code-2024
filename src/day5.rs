@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use crate::utils::read_lines;
+use crate::utils::{bytes_to_num, read_lines};
 
 pub fn solution1() {
     let mut lines = read_input();
@@ -67,13 +67,4 @@ fn rule_line_to_list(line: &str) -> Vec<usize> {
 
 fn is_sorted(rules: &[(usize, usize)], tuple: (usize, usize)) -> bool {
     rules.iter().any(|&r| r == tuple)
-}
-
-fn bytes_to_num(bytes: &[u8]) -> usize {
-    bytes
-        .iter()
-        .rev()
-        .enumerate()
-        .map(|(i, digit)| (*digit - b'0') as usize * 10usize.pow(i as u32))
-        .sum::<usize>()
 }

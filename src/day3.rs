@@ -1,4 +1,4 @@
-use crate::utils::read_lines;
+use crate::utils::{bytes_to_num, read_lines};
 
 pub fn solution1() {
     let lines = read_lines("src/day3/input.txt");
@@ -105,13 +105,4 @@ fn handle_mul(command_bytes: &mut Vec<u8>, sum: &mut usize) {
 
     *sum += num1 * num2;
     command_bytes.clear();
-}
-
-fn bytes_to_num(bytes: &[u8]) -> usize {
-    bytes
-        .iter()
-        .rev()
-        .enumerate()
-        .map(|(i, digit)| (*digit - b'0') as usize * 10usize.pow(i as u32))
-        .sum::<usize>()
 }
